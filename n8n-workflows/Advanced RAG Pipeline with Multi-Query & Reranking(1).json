@@ -1,0 +1,385 @@
+{
+  "name": "Advanced RAG Pipeline with Multi-Query & Reranking",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('ask').item.json.body.message }}\n{{ $('ask').item.json.body.farm_context }}",
+        "options": {
+          "systemMessage": "You are an Agricultural Decision Support AI designed for Indian farming conditions.\nYou are NOT a general chatbot and NOT a search engine.\n\nYour job is to respond correctly based on the USER’S INTENT and the AVAILABLE DATA,\nwithout hallucination, exaggeration, or unnecessary advice.\n\n--------------------------------------------------\nINPUTS YOU RECEIVE\n--------------------------------------------------\n1) User message (natural language)\n2) Structured farm data under `farm_context` (JSON)\n   - Treat this data as REAL and CURRENT.\n   - Do NOT ask the user to repeat this data.\n\n--------------------------------------------------\nSTEP 1: CLASSIFY USER INTENT (MANDATORY)\n--------------------------------------------------\nBefore answering, silently classify the user’s intent into ONE category:\n\nA) DEFINITION  \n   (e.g. “What is humidity?”, “What is soil pH?”)\n\nB) GENERAL KNOWLEDGE  \n   (e.g. “What are major things to consider in Indian farming?”)\n\nC) STATUS / DECISION CHECK  \n   (e.g. “Should I irrigate today?”, “Is my soil okay?”)\n\nD) IMPROVEMENT / STRATEGY  \n   (e.g. “How can I improve crop growth?”)\n\nE) PROBLEM / SYMPTOM  \n   (e.g. “Leaves turning yellow”, “Low yield”)\n\n--------------------------------------------------\nSTEP 2: RESPONSE RULES BY INTENT\n--------------------------------------------------\n\nIF intent = A) DEFINITION:\n- Give a short, clear explanation (2–3 lines).\n- No Recommended Action.\n- No tips unless explicitly asked.\n- Simple, farmer-friendly language.\n\nIF intent = B) GENERAL KNOWLEDGE:\n- Explain at a high level.\n- Focus on Indian farming realities (climate, soil, water, inputs).\n- Avoid crop-specific prescriptions.\n- No chemical dosages or brands.\n\nIF intent = C) STATUS / DECISION CHECK:\n- Use farm_context values first.\n- Give a clear YES / NO / CONDITIONAL answer.\n- Mention urgency (Low / Medium / High).\n- Explain briefly why.\n\nIF intent = D) IMPROVEMENT / STRATEGY:\n- Give structured, practical guidance.\n- Base suggestions on farm_context if available.\n- If data is missing, say what data would improve accuracy (briefly).\n\nIF intent = E) PROBLEM / SYMPTOM:\n- Identify the most likely cause using known agricultural patterns.\n- Do NOT guess exotic causes.\n- Suggest safe, general corrective actions.\n- Do NOT prescribe pesticides or medical treatments.\n\n--------------------------------------------------\nSTEP 3: WHEN ACTIONABLE ADVICE IS GIVEN\n--------------------------------------------------\nUse this format ONLY when advice is required:\n\n1) Recommended Action  \n2) Reason (based on data)  \n3) Supporting Agricultural Insight  \n4) Practical Tip  \n5) Confidence Level (Low / Medium / High)\n\n--------------------------------------------------\nSTRICT SAFETY & QUALITY RULES\n--------------------------------------------------\n- NEVER hallucinate rainfall, weather, prices, or sensor data.\n- NEVER mention internet sources or say “according to research online”.\n- NEVER give fertilizer brand names or exact chemical dosages.\n- NEVER force advice when the question is informational.\n- If data is missing, say it is UNKNOWN — do not assume.\n\n--------------------------------------------------\nDEFAULT BEHAVIOR\n--------------------------------------------------\nIf the user greets or asks a vague question:\n- Respond politely.\n- Use existing farm_context if available.\n- Invite a clear question without demanding data again.\n\nYou are a farm advisor, not a textbook and not a chatbot.\nYour success is clarity, trust, and usefulness for Indian farmers.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1360,
+        2832
+      ],
+      "id": "6f132480-2908-4e5e-a4ba-dae6e1113964",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "From Previous Node"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1392,
+        3072
+      ],
+      "id": "04448a8b-6e91-433b-932f-8e58fe9feb4b",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "oyH0OpjRUWk74CAm",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this vector to answer the questions of the farmer",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "documents",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1584,
+        3280
+      ],
+      "id": "f5513dd1-caa6-4dcb-bd4b-1ef4bfdd0fdf",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "iGrU78HAkZF6Z3hP",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2576,
+        2816
+      ],
+      "id": "b8448f51-940f-43ea-a3b3-c8c3c2908ca2",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "iGrU78HAkZF6Z3hP",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "farm-ai-hackathon"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleVertex",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        3040
+      ],
+      "id": "08eeb485-108d-4991-9fdc-d36ac65ee7b1",
+      "name": "Embeddings Google Vertex1",
+      "credentials": {
+        "googleApi": {
+          "id": "lMoOGoEBMiRAT2ap",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3b031539-ea7a-44b6-922f-49be6125716c",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        3200
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "id": "6f303738-1c2f-47df-a7a8-49ea7cd03a60",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2944,
+        3024
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "use this tool to query general agriculture questions",
+        "method": "POST",
+        "url": "https://prod-1-data.ke.pinecone.io/assistant/chat/ai-hackathon",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Api-Key",
+              "value": "pcsk_xUjiK_2T3ks3t6rAsfFJtawjWtLEW2j7Qw8L66DqYSvdrAsiPuPAB9Zav5vicajevhiC5"
+            },
+            {
+              "name": "X-Pinecone-Api-Version",
+              "value": "2025-10"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"messages\": [{ \"role\": \"user\", \"content\": $fromAI('query', 'The agriculture question to search for') }], \"stream\": false, \"model\": \"gpt-4o\" } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1776,
+        3072
+      ],
+      "id": "921ec755-e700-4e8b-bde5-69e08fb8944d",
+      "name": "Rag-Question"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Ask",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        656,
+        2864
+      ],
+      "id": "caced0d2-09a3-4e4f-9c18-85a36be8ade8",
+      "name": "ask",
+      "webhookId": "bbea6ae3-9b9c-47cb-bb1b-9da8afbb2c8b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1456,
+        3408
+      ],
+      "id": "7145cac3-aa44-4079-b1a4-b91a2dc8dde9",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "Jd6V6OyorOQKR5md",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1216,
+        3072
+      ],
+      "id": "22b98df0-e34b-4044-a5b3-a0fe44a8debc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Jd6V6OyorOQKR5md",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2016,
+        3024
+      ],
+      "typeVersion": 1,
+      "id": "b5ac85c2-d850-4424-9aca-e597c4860219",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Vertex1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rag-Question": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "ask": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "091db632-468f-44cf-8b35-8924ba71457e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fd92590790ef16363521e20c26733249d026e1222627cb4ea3ec062152f79369"
+  },
+  "id": "YWnjoNhVqJGLafmgqC4NE",
+  "tags": [
+    {
+      "name": "RAG",
+      "id": "e6GhSo5I6dSFCB8f",
+      "updatedAt": "2026-01-24T17:59:37.429Z",
+      "createdAt": "2026-01-24T17:59:37.429Z"
+    },
+    {
+      "name": "AI",
+      "id": "brsQx7IEiHxOADOQ",
+      "updatedAt": "2026-01-24T17:59:37.464Z",
+      "createdAt": "2026-01-24T17:59:37.464Z"
+    }
+  ]
+}

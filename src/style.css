@@ -1,0 +1,147 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #0f3d2e;
+}
+
+.app-shell {
+  max-width: 1400px;
+  margin: auto;
+  padding: 24px;
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  color: #e8f5e9;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  background: #2e7d32;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: white;
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+/* Chat */
+.chat-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: 75vh;
+}
+
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Chat bubbles */
+.message {
+  max-width: 75%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.user {
+  align-self: flex-end;
+  background: #2e7d32;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.ai {
+  align-self: flex-start;
+  background: #f1f8e9;
+  color: #1b5e20;
+  border-bottom-left-radius: 4px;
+}
+
+/* Input */
+.chat-input {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.chat-input textarea {
+  grid-column: span 2;
+  resize: none;
+  height: 80px;
+}
+
+.chat-input input,
+.chat-input textarea,
+.chat-input button {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #c8e6c9;
+  font-size: 14px;
+}
+
+.chat-input button {
+  grid-column: span 2;
+  background: #2e7d32;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Farm Context */
+.context-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.context-panel summary {
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.grid input,
+.grid select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #c8e6c9;
+}
+
+.loading {
+  text-align: center;
+  font-weight: 600;
+  color: #2e7d32;
+}

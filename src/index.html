@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Farmer AI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">FA</div>
+      <div>
+        <h1>Farmer AI Assistant</h1>
+        <p>Practical, explainable advice for Indian farms</p>
+      </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="layout">
+
+      <!-- LEFT: Chat -->
+      <section class="chat-panel">
+        <div id="chat" class="chat"></div>
+
+        <form id="aiForm" class="chat-input">
+          <input id="user_id" placeholder="User ID" required />
+          <input id="session_id" placeholder="Session ID" required />
+
+          <textarea
+            id="message"
+            placeholder="Ask your farming question..."
+            required
+          ></textarea>
+
+          <button type="submit">Ask AI</button>
+        </form>
+
+        <div id="loading" class="loading" hidden>Thinking…</div>
+      </section>
+
+      <!-- RIGHT: Farm Context -->
+      <aside class="context-panel">
+        <details open>
+          <summary>Edit Farm Context (optional)</summary>
+
+          <div class="grid">
+            <input id="crop" placeholder="Crop (e.g. Tomato)" />
+            <input id="growth_stage" placeholder="Growth stage" />
+            <input id="irrigation_type" placeholder="Irrigation type" />
+
+            <input id="soil_moisture" type="number" placeholder="Soil moisture %" />
+            <input id="temperature" type="number" placeholder="Temperature °C" />
+            <input id="humidity" type="number" placeholder="Humidity %" />
+
+            <input id="soil_ph" type="number" step="0.1" placeholder="Soil pH" />
+            <input id="soil_electrical_conductivity" type="number" step="0.1" placeholder="Soil EC (dS/m)" />
+
+            <select id="soil_nutrients">
+              <option value="">Soil nutrients</option>
+              <option value="Low">Low</option>
+              <option value="Moderate">Moderate</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </details>
+      </aside>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
