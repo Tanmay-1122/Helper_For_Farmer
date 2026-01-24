@@ -13,13 +13,13 @@
     <!-- Header -->
     <header class="app-header">
       <div class="logo">FA</div>
-      <div>
+      <div class="title">
         <h1>Farmer AI Assistant</h1>
         <p>Practical, explainable advice for Indian farms</p>
       </div>
     </header>
 
-    <!-- Main Layout -->
+    <!-- Main -->
     <main class="layout">
 
       <!-- LEFT: Chat -->
@@ -27,12 +27,14 @@
         <div id="chat" class="chat"></div>
 
         <form id="aiForm" class="chat-input">
-          <input id="user_id" placeholder="User ID" required />
-          <input id="session_id" placeholder="Session ID" required />
+          <div class="row">
+            <input id="user_id" placeholder="User ID" required />
+            <input id="session_id" placeholder="Session ID" required />
+          </div>
 
           <textarea
             id="message"
-            placeholder="Ask your farming question..."
+            placeholder="Ask your farming question…"
             required
           ></textarea>
 
@@ -47,24 +49,65 @@
         <details open>
           <summary>Edit Farm Context (optional)</summary>
 
-          <div class="grid">
-            <input id="crop" placeholder="Crop (e.g. Tomato)" />
-            <input id="growth_stage" placeholder="Growth stage" />
-            <input id="irrigation_type" placeholder="Irrigation type" />
+          <div class="context-block">
 
-            <input id="soil_moisture" type="number" placeholder="Soil moisture %" />
-            <input id="temperature" type="number" placeholder="Temperature °C" />
-            <input id="humidity" type="number" placeholder="Humidity %" />
+            <h4>Basic Details</h4>
+            <div class="grid">
+              <input id="crop" placeholder="What crop are you growing?" />
+              <input id="growth_stage" placeholder="Baby plant / Flowering / Fruit ready" />
+              <input id="irrigation_type" placeholder="Drip / Pipe / Manual watering" />
+            </div>
 
-            <input id="soil_ph" type="number" step="0.1" placeholder="Soil pH" />
-            <input id="soil_electrical_conductivity" type="number" step="0.1" placeholder="Soil EC (dS/m)" />
+            <h4>Soil Moisture</h4>
+            <select id="soil_moisture_state">
+              <option value="">If you squeeze soil in hand…</option>
+              <option value="crumbles">It crumbles (Dry)</option>
+              <option value="ball">Forms a soft ball (Good)</option>
+              <option value="water">Water comes out (Too wet)</option>
+            </select>
 
+            <h4>Temperature</h4>
+            <select id="temperature_state">
+              <option value="">How hot is the day?</option>
+              <option value="cool">Cool / pleasant</option>
+              <option value="pleasant">Normal warm</option>
+              <option value="hot">Hot afternoon</option>
+              <option value="very_hot">Very hot / heatwave</option>
+            </select>
+
+            <h4>Humidity</h4>
+            <select id="humidity_state">
+              <option value="">How does the air feel?</option>
+              <option value="dry_air">Dry</option>
+              <option value="comfortable">Comfortable</option>
+              <option value="sticky">Sticky</option>
+              <option value="very_humid">Very humid</option>
+            </select>
+
+            <h4>Soil pH</h4>
+            <select id="soil_ph_state">
+              <option value="">Soil nature</option>
+              <option value="acidic">Sour / acidic</option>
+              <option value="neutral">Normal</option>
+              <option value="alkaline">White crust / salty</option>
+            </select>
+
+            <h4>Soil Salinity</h4>
+            <select id="soil_ec_state">
+              <option value="">Salt level in soil</option>
+              <option value="low_salinity">Low</option>
+              <option value="moderate_salinity">Moderate</option>
+              <option value="high_salinity">High</option>
+            </select>
+
+            <h4>Soil Nutrients</h4>
             <select id="soil_nutrients">
-              <option value="">Soil nutrients</option>
+              <option value="">Select nutrient level</option>
               <option value="Low">Low</option>
               <option value="Moderate">Moderate</option>
               <option value="High">High</option>
             </select>
+
           </div>
         </details>
       </aside>
