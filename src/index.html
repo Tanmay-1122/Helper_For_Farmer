@@ -1,120 +1,341 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Farmer AI Assistant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="app-shell">
+  <div class="mesh-bg"></div>
 
-    <!-- Header -->
-    <header class="app-header">
-      <div class="logo">FA</div>
-      <div class="title">
-        <h1>Farmer AI Assistant</h1>
-        <p>Practical, explainable advice for Indian farms</p>
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-mark">🌾</div>
+      <div class="logo-text">
+        <span class="logo-title">Farmer AI Assistant</span>
+        <span class="logo-sub">IoT-Powered Farm Intelligence</span>
       </div>
-    </header>
+    </div>
+    <div class="header-right">
+      <div class="iot-badge" id="iotBadge">
+        <span class="iot-dot" id="iotDot"></span>
+        <span id="iotBadgeText">IoT Ready</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <span class="theme-icon" id="themeIcon">🌙</span>
+      </button>
+      <div class="lang-selector">
+        <button class="lang-btn" id="langBtn" title="Select Translation Language">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6" />
+          </svg>
+          <span id="activeLang">Eng</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <div class="lang-option active" data-lang="en">English</div>
+          <div class="lang-option" data-lang="hi">Hindi (हिंदी)</div>
+          <div class="lang-option" data-lang="mr">Marathi (मराठी)</div>
+          <div class="lang-option" data-lang="gu">Gujarati (ગુજરાતી)</div>
+          <div class="lang-option" data-lang="ta">Tamil (தமிழ்)</div>
+        </div>
+      </div>
+      <button class="context-toggle-btn" id="contextToggleBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path d="M9 3v18" />
+        </svg>
+        Farm Context
+      </button>
+    </div>
+  </header>
 
-    <!-- Main -->
-    <main class="layout">
+  <!-- DASHBOARD -->
+  <section class="dashboard bento-grid">
 
-      <!-- LEFT: Chat -->
-      <section class="chat-panel">
-        <div id="chat" class="chat"></div>
+    <div class="dash-card bento-health" id="healthCard">
+      <div class="dash-label">
+        Farm Health
+        <span class="live-tag">SECURE</span>
+      </div>
+      <div class="health-display">
+        <span class="health-num" id="healthNum">–</span>
+        <span class="health-den">/100</span>
+      </div>
+      <div class="health-bar-track">
+        <div class="health-bar-fill" id="healthBarFill"></div>
+      </div>
+      <div class="dash-status" id="healthStatus">Awaiting system initialization...</div>
+    </div>
 
-        <form id="aiForm" class="chat-input">
-          <div class="row">
-            <input id="user_id" placeholder="User ID" required />
-            <input id="session_id" placeholder="Session ID" required />
-          </div>
+    <div class="dash-card bento-moisture" id="moistureCard">
+      <div class="dash-label">
+        Soil Moisture
+        <span class="live-tag" id="moistureLiveTag">MANUAL</span>
+      </div>
+      <div class="glint-overlay"></div>
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 120 70">
+          <path class="gauge-track" d="M15,65 A50,50 0 0,1 105,65" />
+          <path class="gauge-fill" id="gaugeFill" d="M15,65 A50,50 0 0,1 105,65" stroke-dasharray="0 157" />
+        </svg>
+        <div class="gauge-center">
+          <span class="gauge-val" id="moistureValue">–</span>
+          <span class="gauge-unit">%</span>
+        </div>
+      </div>
+      <div class="dash-status" id="moistureStatus">Awaiting sensor uplink...</div>
+    </div>
 
-          <textarea
-            id="message"
-            placeholder="Ask your farming question…"
-            required
-          ></textarea>
+    <div class="dash-card bento-stage" id="stageCard">
+      <div class="dash-label">Development Phase</div>
+      <div class="stage-emoji" id="stageIcon">🔄</div>
+      <div class="stage-label" id="stageName">Identifying...</div>
+      <div class="stage-track bento-pips">
+        <div class="stage-pip" id="pip1"></div>
+        <div class="stage-pip" id="pip2"></div>
+        <div class="stage-pip" id="pip3"></div>
+        <div class="stage-pip" id="pip4"></div>
+      </div>
+    </div>
 
-          <button type="submit">Ask AI</button>
-        </form>
+    <div class="dash-card bento-weather" id="weatherCard">
+      <div class="dash-label">Atmospheric Data</div>
+      <div class="weather-top">
+        <span class="weather-icon" id="weatherIcon">🌑</span>
+        <span class="weather-temp" id="weatherTemp">–°C</span>
+      </div>
+      <div class="weather-row bento-weather-row">
+        <span id="weatherHumidity">💧 –%</span>
+        <span id="weatherRain">🌧 –mm</span>
+      </div>
+      <div class="dash-status" id="weatherStatus">Syncing location...</div>
+    </div>
 
-        <div id="loading" class="loading" hidden>Thinking…</div>
-      </section>
+    <div class="dash-card bento-alerts dash-card--alerts" id="alertsCard">
+      <div class="dash-label">System Diagnostics</div>
+      <div class="alerts-body" id="alertsList">
+        <div class="alert-clear">
+          <span class="alert-clear-icon">✓</span>
+          <span>Security Protocol Active</span>
+        </div>
+      </div>
+    </div>
 
-      <!-- RIGHT: Farm Context -->
-      <aside class="context-panel">
-        <details open>
-          <summary>Edit Farm Context (optional)</summary>
+  </section>
 
-          <div class="context-block">
-
-            <h4>Basic Details</h4>
-            <div class="grid">
-              <input id="crop" placeholder="What crop are you growing?" />
-              <input id="growth_stage" placeholder="Baby plant / Flowering / Fruit ready" />
-              <input id="irrigation_type" placeholder="Drip / Pipe / Manual watering" />
-            </div>
-
-            <h4>Soil Moisture</h4>
-            <select id="soil_moisture_state">
-              <option value="">If you squeeze soil in hand…</option>
-              <option value="crumbles">It crumbles (Dry)</option>
-              <option value="ball">Forms a soft ball (Good)</option>
-              <option value="water">Water comes out (Too wet)</option>
-            </select>
-
-            <h4>Temperature</h4>
-            <select id="temperature_state">
-              <option value="">How hot is the day?</option>
-              <option value="cool">Cool / pleasant</option>
-              <option value="pleasant">Normal warm</option>
-              <option value="hot">Hot afternoon</option>
-              <option value="very_hot">Very hot / heatwave</option>
-            </select>
-
-            <h4>Humidity</h4>
-            <select id="humidity_state">
-              <option value="">How does the air feel?</option>
-              <option value="dry_air">Dry</option>
-              <option value="comfortable">Comfortable</option>
-              <option value="sticky">Sticky</option>
-              <option value="very_humid">Very humid</option>
-            </select>
-
-            <h4>Soil pH</h4>
-            <select id="soil_ph_state">
-              <option value="">Soil nature</option>
-              <option value="acidic">Sour / acidic</option>
-              <option value="neutral">Normal</option>
-              <option value="alkaline">White crust / salty</option>
-            </select>
-
-            <h4>Soil Salinity</h4>
-            <select id="soil_ec_state">
-              <option value="">Salt level in soil</option>
-              <option value="low_salinity">Low</option>
-              <option value="moderate_salinity">Moderate</option>
-              <option value="high_salinity">High</option>
-            </select>
-
-            <h4>Soil Nutrients</h4>
-            <select id="soil_nutrients">
-              <option value="">Select nutrient level</option>
-              <option value="Low">Low</option>
-              <option value="Moderate">Moderate</option>
-              <option value="High">High</option>
-            </select>
-
-          </div>
-        </details>
-      </aside>
-
-    </main>
+  <!-- IoT LIVE PANEL (hidden until IoT mode active) -->
+  <div class="iot-live-panel" id="iotLivePanel" style="display:none">
+    <div class="iot-live-header">
+      <span class="iot-live-dot"></span>
+      <span>Live Sensor Feed</span>
+      <span class="iot-live-time" id="iotLastUpdate">–</span>
+      <button class="iot-stop-btn" id="iotStopBtn">Stop Mock</button>
+    </div>
+    <div class="iot-live-sensors">
+      <div class="iot-sensor"><span class="iot-sensor-label">Soil Moisture</span><span class="iot-sensor-val"
+          id="iotMoistureVal">–%</span></div>
+      <div class="iot-sensor"><span class="iot-sensor-label">Temperature</span><span class="iot-sensor-val"
+          id="iotTempVal">–°C</span></div>
+      <div class="iot-sensor"><span class="iot-sensor-label">Humidity</span><span class="iot-sensor-val"
+          id="iotHumVal">–%</span></div>
+      <div class="iot-sensor"><span class="iot-sensor-label">Soil pH</span><span class="iot-sensor-val"
+          id="iotPhVal">–</span></div>
+      <div class="iot-sensor"><span class="iot-sensor-label">EC</span><span class="iot-sensor-val" id="iotEcVal">–
+          dS/m</span></div>
+      <button class="iot-demo-btn" id="iotDemoBtn">▶ Start Mock IoT</button>
+    </div>
   </div>
+
+  <!-- MAIN -->
+  <main class="main-layout">
+
+    <section class="chat-panel">
+
+      <!-- Photo preview -->
+      <div class="photo-preview-bar" id="photoPreviewBar" style="display:none">
+        <div class="photo-preview-inner">
+          <img id="photoPreviewImg" src="" alt="Crop photo" />
+          <div class="photo-preview-info">
+            <span id="photoPreviewName">photo.jpg</span>
+            <span class="photo-preview-hint">📸 AI will analyze this image for diseases</span>
+          </div>
+          <button class="photo-remove-btn" id="photoRemoveBtn" title="Remove photo">✕</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat">
+        <div class="msg-row msg-ai">
+          <div class="av av-ai">🌾</div>
+          <div class="bubble bubble-ai">
+            <p>Namaste! 🙏 I'm your AI farming assistant. I combine live sensor data from your IoT devices with
+              agricultural research to give precise advice.</p>
+            <p>You can also <strong>📸 upload a photo</strong> of your crop and I'll detect diseases, or use the
+              <strong>🎤 microphone</strong> to ask questions by voice!
+            </p>
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="typing-row" id="typingIndicator" hidden>
+        <div class="av av-ai">🌾</div>
+        <div class="typing-bubble">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Voice recording indicator -->
+      <div class="voice-recording-bar" id="voiceRecordingBar" style="display:none">
+        <span class="voice-rec-dot"></span>
+        <span id="voiceRecordingText">Listening… click mic again to send</span>
+        <span class="voice-rec-timer" id="voiceTimer">0:00</span>
+      </div>
+
+      <form class="input-bar" id="aiForm" onsubmit="return false;">
+        <div class="input-meta">
+          <input type="text" id="user_id" class="meta-input" placeholder="User ID" value="1" />
+          <input type="text" id="session_id" class="meta-input" placeholder="Session ID" value="1" />
+          <!-- IoT Demo trigger -->
+          <button type="button" class="iot-trigger-btn" id="iotTriggerBtn" title="Toggle IoT Dashboard">📡 IoT</button>
+        </div>
+        <div class="input-compose">
+          <!-- Photo upload button -->
+          <label class="photo-btn" for="photoInput" title="Upload crop photo for disease detection">
+            📸
+            <input type="file" id="photoInput" accept="image/*" style="display:none" />
+          </label>
+          <textarea id="message" class="msg-textarea"
+            placeholder="Ask about your crops, or upload a photo for disease detection…" rows="1"></textarea>
+          <!-- Mic button -->
+          <button type="button" class="mic-btn" id="micBtn" title="Click to speak">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+              <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <line x1="8" y1="23" x2="16" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </button>
+          <!-- Send button -->
+          <button type="button" class="send-btn" id="sendBtn" title="Send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- CONTEXT DRAWER -->
+    <aside class="context-drawer" id="contextDrawer">
+      <div class="drawer-head">
+        <h3>Farm Context</h3>
+        <button class="drawer-close" id="drawerClose" title="Close">✕</button>
+      </div>
+      <div class="drawer-scroll">
+
+        <div class="d-section">
+          <div class="d-section-title">🌿 Basic Details</div>
+          <div class="d-field"><label>Crop</label><input id="crop" type="text" placeholder="e.g. Tomato, Wheat, Rice" />
+          </div>
+          <div class="d-field"><label>Growth Stage</label><input id="growth_stage" type="text"
+              placeholder="Baby plant / Flowering / Fruit ready" /></div>
+          <div class="d-field"><label>Irrigation</label><input id="irrigation_type" type="text"
+              placeholder="Drip / Pipe / Manual" /></div>
+        </div>
+
+        <div class="d-section">
+          <div class="d-section-title">💧 Soil Moisture</div>
+          <select id="soil_moisture_state" class="d-select">
+            <option value="">Squeeze soil in hand…</option>
+            <option value="crumbles">Crumbles — Dry (≈15%)</option>
+            <option value="ball">Soft ball — Good (≈50%)</option>
+            <option value="water">Water comes out — Too wet (≈85%)</option>
+          </select>
+        </div>
+
+        <div class="d-section">
+          <div class="d-section-title">🌡️ Temperature</div>
+          <select id="temperature_state" class="d-select">
+            <option value="">How hot is today?</option>
+            <option value="cool">Cool / Pleasant (≈18°C)</option>
+            <option value="pleasant">Normal warm (≈26°C)</option>
+            <option value="hot">Hot afternoon (≈35°C)</option>
+            <option value="very_hot">Very hot / Heatwave (≈42°C)</option>
+          </select>
+        </div>
+
+        <div class="d-section">
+          <div class="d-section-title">🌫️ Humidity</div>
+          <select id="humidity_state" class="d-select">
+            <option value="">How does the air feel?</option>
+            <option value="dry_air">Dry (≈30%)</option>
+            <option value="comfortable">Comfortable (≈60%)</option>
+            <option value="sticky">Sticky / Humid (≈75%)</option>
+            <option value="very_humid">Very humid (≈90%)</option>
+          </select>
+        </div>
+
+        <div class="d-section">
+          <div class="d-section-title">🧪 Soil pH</div>
+          <select id="soil_ph_state" class="d-select">
+            <option value="">Soil nature</option>
+            <option value="acidic">Sour / Acidic (≈5.5)</option>
+            <option value="neutral">Normal / Neutral (≈6.8)</option>
+            <option value="alkaline">White crust / Alkaline (≈7.8)</option>
+          </select>
+        </div>
+
+        <div class="d-section">
+          <div class="d-section-title">⚗️ Soil Salinity (EC)</div>
+          <select id="soil_ec_state" class="d-select">
+            <option value="">Salt level</option>
+            <option value="low_salinity">Low (≈0.6 dS/m)</option>
+            <option value="moderate_salinity">Moderate (≈1.2 dS/m)</option>
+            <option value="high_salinity">High (≈2.5 dS/m)</option>
+          </select>
+        </div>
+
+        <div class="d-section">
+          <div class="d-section-title">🌱 Soil Nutrients</div>
+          <select id="soil_nutrients" class="d-select">
+            <option value="">Nutrient level</option>
+            <option value="Low">Low — needs fertilizer</option>
+            <option value="Moderate">Moderate — okay</option>
+            <option value="High">High — well nourished</option>
+          </select>
+        </div>
+
+        <div class="iot-note">
+          <div class="iot-note-icon">📡</div>
+          <div>
+            <strong>IoT Integration Ready</strong>
+            <p>Click the 📡 IoT button to see the live sensor dashboard. ESP32/Arduino can POST data to update it
+              automatically.</p>
+          </div>
+        </div>
+
+        <div class="drawer-footer">
+          <button type="button" class="save-context-btn" id="saveContextBtn">
+            💾 Save & Update Dashboard
+          </button>
+        </div>
+
+      </div>
+    </aside>
+
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+  </main>
 
   <script src="script.js"></script>
 </body>
+
 </html>
