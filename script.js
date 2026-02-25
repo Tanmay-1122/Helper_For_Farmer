@@ -3,7 +3,7 @@
    Features: Voice input, Photo upload, IoT mock dashboard
 ═══════════════════════════════════════════════ */
 
-const WEBHOOK_URL = "http://localhost:5678/webhook/46a07f8c-92e1-4838-827b-960416c16ed4";
+const WEBHOOK_URL = "https://reliance-santa-rice-must.trycloudflare.com/webhook/46a07f8c-92e1-4838-827b-960416c16ed4";
 const OPENWEATHER_API_KEY = "c20cd2aa7895603c5a8ea2a5115aa939";
 const DEFAULT_LOCATION = { lat: 18.5246, lon: 73.8567, name: "Pune, Maharashtra" };
 
@@ -1055,4 +1055,5 @@ window.addEventListener("DOMContentLoaded", async () => {
   });
 
   console.log("✅ Ready — Voice, Photo, IoT all initialized");
+
 });
